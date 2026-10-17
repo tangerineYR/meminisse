@@ -38,3 +38,15 @@ it("sets Secure cookies in production", async () => {
   const response = await productionPost(request("login", { method: "POST", headers: { origin: "https://meminisse.test" }, body: "{}" }), ctx("login"));
   expect(response.headers.get("set-cookie")).toMatch(/Secure/);
 });
+it("uses the actual Host when Next normalizes an internal URL", async () => {
+  vi.stubGlobal("fetch", vi.fn(async () => new Response(null, { status: 422 })));
+  const response = await POST(new NextRequest("http://localhost:3001/api/backend/api/v1/auth/login", { method: "POST", headers: { host: "127.0.0.1:3001", origin: "http://127.0.0.1:3001" }, body: "{}" }), ctx("login"));
+  expect(response.status).toBe(422);
+});
+it("pins the deployment origin and rejects spoofed forwarding headers", async () => {
+  vi.stubEnv("APP_ORIGIN", "https://meminisse.test");
+  const fetcher = vi.fn(async () => new Response(null, { status: 422 })); vi.stubGlobal("fetch", fetcher);
+  const response = await POST(request("login", { method: "POST", headers: { origin: "https://attacker.test", "x-forwarded-host": "attacker.test" }, body: "{}" }), ctx("login"));
+  expect(response.status).toBe(403);
+  expect(fetcher).not.toHaveBeenCalled();
+});

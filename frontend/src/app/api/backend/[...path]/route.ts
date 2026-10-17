@@ -12,7 +12,11 @@ async function proxy(request: NextRequest, context: Context) {
   if (path.some(p => !/^[a-zA-Z0-9_-]+$/.test(p)) || path[0] !== "api" || path[1] !== "v1") {
     return NextResponse.json({ detail: "Invalid API path" }, { status: 400 });
   }
-  if (!["GET", "HEAD"].includes(request.method) && request.headers.get("origin") !== request.nextUrl.origin) {
+  // Next may normalize loopback/internal URLs. APP_ORIGIN pins the public origin
+  // behind a reverse proxy; otherwise compare with the actual Host, never a
+  // client-supplied X-Forwarded-Host value.
+  const expectedOrigin = process.env.APP_ORIGIN ?? `${request.nextUrl.protocol}//${request.headers.get("host") ?? request.nextUrl.host}`;
+  if (!["GET", "HEAD"].includes(request.method) && request.headers.get("origin") !== expectedOrigin) {
     return NextResponse.json({ detail: "Cross-origin request denied" }, { status: 403 });
   }
   const endpoint = "/" + path.join("/");
