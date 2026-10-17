@@ -82,7 +82,7 @@ export default function OnboardingPage() {
   const router = useRouter();
   // 계정은 아직 없다 — 첫 화면에서 받은 이메일/비밀번호/이름(draft)에 이 화면의
   // 생년/고향/동의까지 다 모은 뒤, 마지막 단계에서 POST /users로 한 번에 생성한다.
-  const [draft, setDraft] = useState<SignupDraft | null>(null);
+  const [draft] = useState<SignupDraft | null>(() => signupDraft.get());
   const [step, setStep] = useState(0);
   const [birthYear, setBirthYear] = useState("");
   const [hometown, setHometown] = useState("");
@@ -105,13 +105,9 @@ export default function OnboardingPage() {
   }, []);
 
   useEffect(() => {
-    const stored = signupDraft.get();
-    if (stored) {
-      setDraft(stored);
-      return;
-    }
+    if (draft) return;
     router.replace("/");
-  }, [router]);
+  }, [router, draft]);
 
   if (!draft) return null;
   const displayName = draft.name;

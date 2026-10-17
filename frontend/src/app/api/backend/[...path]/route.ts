@@ -17,6 +17,7 @@ async function proxy(request: NextRequest, context: Context) {
   }
   const endpoint = "/" + path.join("/");
   if (endpoint === "/api/v1/auth/logout") {
+    if (request.method !== "POST") return new NextResponse(null, { status: 405 });
     const response = NextResponse.json({ ok: true });
     for (const name of [ACCESS, REFRESH]) response.cookies.set(name, "", { ...cookieOptions, maxAge: 0 });
     return response;
