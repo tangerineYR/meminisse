@@ -3,7 +3,6 @@ from __future__ import annotations
 from app.agents.prompts.extraction import _NULLABLE_STRING
 
 
-from collections import Counter
 
 from typing import Any
 
@@ -135,5 +134,3 @@ LIFE_MILESTONE_KEYWORDS: dict[str, list[str]] = {
     "relocation": ["이사", "이주", "이민"],
     "retirement": ["은퇴", "정년"],
 }
-
-

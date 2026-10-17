@@ -4,7 +4,6 @@ from app.agents.prompts.interview import ALL_SLOTS
 from app.agents.prompts.interview import SLOT_GATING_SYSTEM_PROMPT
 
 
-from collections import Counter
 
 from typing import Any
 
@@ -132,5 +131,3 @@ NON_MEDICAL_SERVICE_DISCLOSURE = """\
 
 def contains_crisis_keyword(text: str) -> bool:
     return any(keyword in text for keyword in CRISIS_KEYWORDS)
-
-

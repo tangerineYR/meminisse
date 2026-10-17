@@ -242,3 +242,39 @@ def test_get_media_asset_by_id_scopes_by_current_user(client: TestClient) -> Non
 
 # GET /events 라우트와 그 테스트는 제거됐다(2026-07-18) — '나의 이야기'가 세션
 # 단위 카드(GET /stories)로 대체한 뒤 프론트 어디서도 쓰지 않던 죽은 경로였다.
+
+
+def test_pdf_capabilities_are_signed_only_after_ownership_check(client: TestClient) -> None:
+    from unittest.mock import AsyncMock, patch
+    from app.gateways.mock.gateways import MockObjectStorage
+    owner, token = _signup_and_login(client, "pdf-owner@example.com")
+    _, stranger_token = _signup_and_login(client, "pdf-stranger@example.com")
+    response = client.get(f"/api/v1/autobiographies/{owner}", headers=_auth_headers(token))
+    book_id = response.json()["id"]
+    default_store.autobiographies[uuid.UUID(book_id)].pdf_key = "private/book.pdf"
+    with patch.object(MockObjectStorage, "get_presigned_url", new_callable=AsyncMock, return_value="https://signed.example/private") as sign:
+        denied = client.get(f"/api/v1/autobiographies/{book_id}/pdf-url", headers=_auth_headers(stranger_token))
+        assert denied.status_code == 404
+        sign.assert_not_called()
+        own = client.get(f"/api/v1/autobiographies/{book_id}/pdf-url", headers=_auth_headers(token))
+        assert own.json() == {"url": "https://signed.example/private", "expires_in": 300}
+        assert own.headers["cache-control"] == "private, no-store"
+        sign.assert_awaited_once_with("private/book.pdf")
+
+
+def test_upload_uses_generated_key_and_rejects_invalid_image(client: TestClient) -> None:
+    from io import BytesIO
+    from PIL import Image
+    from unittest.mock import patch
+    owner, token = _signup_and_login(client, "upload-owner@example.com")
+    buffer = BytesIO(); Image.new("RGB", (2, 2)).save(buffer, format="PNG")
+    with patch("app.workers.enqueue.enqueue_in_background"):
+        response = client.post("/api/v1/media-assets", headers=_auth_headers(token), files={"file": ("../../secret.png", buffer.getvalue(), "image/png")})
+    assert response.status_code == 201
+    asset = default_store.media_assets[uuid.UUID(response.json()["id"])]
+    assert asset.s3_key.startswith(f"users/{owner}/media/")
+    assert "secret" not in asset.s3_key and ".." not in asset.s3_key
+    assert not hasattr(asset, "s3_url")
+    assert "expires_in=300" in response.json()["s3_url"]
+    rejected = client.post("/api/v1/media-assets", headers=_auth_headers(token), files={"file": ("image.png", b"not an image", "image/png")})
+    assert rejected.status_code == 422

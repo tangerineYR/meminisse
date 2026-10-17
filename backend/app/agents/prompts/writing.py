@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 
-from collections import Counter
 
 from typing import Any
 
@@ -683,5 +682,3 @@ def build_unity_revision_prompt(*, style_bible: str, full_manuscript: str) -> li
         {"role": "system", "content": UNITY_REVISION_SYSTEM_PROMPT},
         {"role": "user", "content": user_prompt},
     ]
-
-

@@ -82,6 +82,7 @@ async def get_polling_status(
         id=autobiography_status.id,
         status=autobiography_status.status,
         final_content_ready=autobiography_status.final_content_ready,
+        pdf_version=autobiography_status.pdf_key,
         pdf_url=(await gateways.storage.get_presigned_url(autobiography_status.pdf_key)
                  if autobiography_status.pdf_key else None),
         chapters=[
@@ -457,4 +458,14 @@ async def retain_real_name(
 
 async def _read_autobiography(gateways, record) -> AutobiographyRead:
     data = AutobiographyRead.model_validate(record)
-    return data.model_copy(update={"pdf_url": await gateways.storage.get_presigned_url(record.pdf_key) if record.pdf_key else None})
+    return data.model_copy(update={"pdf_version": record.pdf_key, "pdf_url": await gateways.storage.get_presigned_url(record.pdf_key) if record.pdf_key else None})
+
+
+@router.get("/{autobiography_id}/pdf-url")
+async def get_pdf_url(
+    autobiography_id: uuid.UUID, gateways: GatewaysDep, current_user: CurrentUserDep
+) -> dict[str, str | int]:
+    record = await _require_own_autobiography(gateways, autobiography_id, current_user)
+    if not record.pdf_key:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "PDF가 아직 준비되지 않았습니다.")
+    return {"url": await gateways.storage.get_presigned_url(record.pdf_key), "expires_in": 300}

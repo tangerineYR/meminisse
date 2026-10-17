@@ -42,3 +42,11 @@ async def upstage_api_error_handler(request: Request, exc: APIStatusError) -> JS
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.middleware("http")
+async def private_response_cache_control(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "private, no-store"
+    return response

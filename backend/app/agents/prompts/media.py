@@ -148,5 +148,3 @@ def build_ocr_date_extraction_prompt(*, ocr_text: str) -> list[dict[str, str]]:
         {"role": "system", "content": OCR_DATE_EXTRACTION_SYSTEM_PROMPT},
         {"role": "user", "content": ocr_text},
     ]
-
-

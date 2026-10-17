@@ -2,48 +2,29 @@
 from __future__ import annotations
 
 
-import asyncio
 
-import itertools
 
-import logging
 
-import re
 
 import statistics
 
 import uuid
 
-from datetime import datetime, timezone
 
-from decimal import Decimal
 
 from app.agents import prompts
 
 from app.clients import embeddings as embeddings_client
 
-from app.clients import groundedness as groundedness_client
 
 from app.clients import llm_router
 
-from app.data.question_bank import QUESTION_BANK_BY_SEQUENCE
 
-from app.gateways.dto import (
-    AutobiographyRecord,
-    AutobiographyStatusRecord,
-    ChapterDraftCreateData,
-    ChapterDraftRecord,
-    ChapterDraftWriteResult,
-    ChapterStatusRecord,
-    EventImportanceUpdate,
-    EventRecord,
-)
+from app.gateways.dto import AutobiographyRecord, EventRecord
 
 from app.gateways.factory import Gateways
 
-from app.models.enums import AssetType, AutobiographyStatus, DraftStatus, LifeMilestoneCategory, UserStage
 
-from app.services import character_service
 
 
 async def _retrieve_events_for_chapter(
@@ -276,5 +257,3 @@ async def _previous_chapter_summary(
         reasoning_effort="low",
     )
     return response.choices[0].message.content or previous.content[-1000:]
-
-

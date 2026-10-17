@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 
-from collections import Counter
 
 from typing import Any
 
@@ -199,5 +198,3 @@ def build_chapter_repair_prompt(
         {"role": "system", "content": CHAPTER_REPAIR_SYSTEM_PROMPT},
         {"role": "user", "content": user_prompt},
     ]
-
-

@@ -52,6 +52,7 @@ class AutobiographyPollingStatus(BaseModel):
     status: AutobiographyStatus
     final_content_ready: bool
     pdf_url: str | None = None
+    pdf_version: str | None = None
     chapters: list[ChapterStatusItem]
 
 
@@ -74,6 +75,7 @@ class AutobiographyRead(BaseModel):
     book_synopsis: str | None
     final_content: str | None
     pdf_url: str | None = None
+    pdf_version: str | None = None
     photo_placements: list[PhotoPlacementItem] | None
     created_at: datetime
     updated_at: datetime

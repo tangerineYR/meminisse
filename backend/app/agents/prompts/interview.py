@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 
-from collections import Counter
 
 from typing import Any
 
@@ -345,5 +344,3 @@ def build_wrap_up_reply_classification_prompt(*, reply: str) -> list[dict[str, s
         {"role": "system", "content": WRAP_UP_REPLY_CLASSIFICATION_SYSTEM_PROMPT},
         {"role": "user", "content": f"답변: \"{reply}\""},
     ]
-
-

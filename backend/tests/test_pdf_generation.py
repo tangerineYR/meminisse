@@ -53,7 +53,7 @@ async def test_generate_manuscript_pdf_produces_valid_pdf_and_stores_url() -> No
         assert autobiography.pdf_key.endswith(".pdf")
 
         pdf_bytes = gateways.storage._store.objects[  # type: ignore[attr-defined]
-            f"users/{user.id}/manuscripts/{autobiography.id}.pdf"
+            autobiography.pdf_key
         ]
         reader = PdfReader(io.BytesIO(pdf_bytes))
         # 표지 + 목차 + 챕터 1개 = 최소 3페이지.
@@ -129,7 +129,7 @@ async def test_generate_manuscript_pdf_renders_part_divider_pages() -> None:
         autobiography = await pdf_service.generate_manuscript_pdf(gateways, autobiography.id)
 
         pdf_bytes = gateways.storage._store.objects[  # type: ignore[attr-defined]
-            f"users/{user.id}/manuscripts/{autobiography.id}.pdf"
+            autobiography.pdf_key
         ]
         reader = PdfReader(io.BytesIO(pdf_bytes))
         # 표지 + 목차 + Part 구분 페이지 2장 + 챕터 4장 = 최소 8페이지.

@@ -614,5 +614,3 @@ def build_customization_recommendation_prompt(
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": user_prompt},
     ]
-
-

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 
-from collections import Counter
 
 from typing import Any
 
@@ -392,5 +391,3 @@ def build_event_extraction_prompt(
         {"role": "system", "content": EVENT_EXTRACTION_SYSTEM_PROMPT},
         {"role": "user", "content": user_content},
     ]
-
-
