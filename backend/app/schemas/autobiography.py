@@ -55,6 +55,13 @@ class AutobiographyPollingStatus(BaseModel):
     chapters: list[ChapterStatusItem]
 
 
+class AutobiographyProgress(BaseModel):
+    from app.autobiography import policy as _policy
+    minimum_sessions: int = _policy.MIN_COMPLETED_SESSIONS_FOR_AUTOBIOGRAPHY
+    recommended_sessions: int = _policy.RECOMMENDED_COMPLETED_SESSIONS
+    progress_total: int = _policy.AUTOBIOGRAPHY_PROGRESS_TOTAL
+
+
 class AutobiographyRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -73,6 +80,7 @@ class AutobiographyRead(BaseModel):
     # GET /{user_id}에서만 실제로 채워진다(진행률 게이트 UI용) — 그 외 응답(예:
     # /finished 목록)에서는 의미가 없어 기본값 0으로 둔다.
     completed_session_count: int = 0
+    progress: AutobiographyProgress = Field(default_factory=AutobiographyProgress)
 
 
 class TocCandidateSelect(BaseModel):
