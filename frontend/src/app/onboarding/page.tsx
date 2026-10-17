@@ -10,7 +10,6 @@ import { authApi } from "@/lib/api/auth";
 import { usersApi } from "@/lib/api/users";
 import { ApiError } from "@/lib/api/client";
 import { legalApi } from "@/lib/api/legal";
-import { session } from "@/lib/auth/session";
 import { signupDraft, type SignupDraft } from "@/lib/auth/signupDraft";
 import type { EducationLevel, MaritalStatus } from "@/types/api";
 
@@ -132,12 +131,10 @@ export default function OnboardingPage() {
         marital_status: maritalStatus || undefined,
         has_children: hasChildren ? hasChildren === "yes" : undefined,
       });
-      const { access_token, refresh_token } = await authApi.login({
+      await authApi.login({
         email: draft.email,
         password: draft.password,
       });
-      session.setTokens(access_token, refresh_token);
-      session.setUserId(user.id);
 
       await usersApi.createConsent(user.id, {
         consent_type: "data_collection",

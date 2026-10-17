@@ -110,7 +110,7 @@ async def render_manuscript_html(gateways: Gateways, autobiography: Autobiograph
     chapters = await gateways.chapters.list_by_autobiography(autobiography.id)
     author = await gateways.users.get_by_id(autobiography.user_id)
     media_assets = await gateways.media_assets.list_by_user(autobiography.user_id)
-    media_url_by_id = {m.id: m.s3_url for m in media_assets if m.asset_type == AssetType.IMAGE}
+    media_url_by_id = {m.id: await gateways.storage.get_presigned_url(m.s3_key) for m in media_assets if m.asset_type == AssetType.IMAGE}
 
     # 사용자가 "책에 실을 사진 고르기"에서 직접 지정한 배치만 반영한다.
     # 미지정(None)과 빈 배열 모두 "사진 없음"으로 취급 — 챕터 소환 이벤트의
@@ -224,8 +224,8 @@ async def generate_manuscript_pdf(gateways: Gateways, autobiography_id: uuid.UUI
         )
 
     key = f"users/{autobiography.user_id}/manuscripts/{autobiography.id}.pdf"
-    pdf_url = await gateways.storage.put_object(key, pdf_bytes, content_type="application/pdf")
+    await gateways.storage.put_object(key, pdf_bytes, content_type="application/pdf")
 
-    autobiography = await gateways.autobiographies.update(autobiography_id, pdf_url=pdf_url)
+    autobiography = await gateways.autobiographies.update(autobiography_id, pdf_key=key)
     await gateways.commit()
     return autobiography

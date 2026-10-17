@@ -165,13 +165,13 @@ async def test_media_asset_gateway_list_by_user_scopes_correctly() -> None:
     gw = MockMediaAssetGateway(default_store)
     a_id, b_id = uuid.uuid4(), uuid.uuid4()
     await gw.create(
-        MediaAssetCreateData(user_id=a_id, s3_key="a/1.jpg", s3_url="https://x/a1", asset_type=AssetType.IMAGE)
+        MediaAssetCreateData(user_id=a_id, s3_key="a/1.jpg", asset_type=AssetType.IMAGE)
     )
     await gw.create(
-        MediaAssetCreateData(user_id=a_id, s3_key="a/2.jpg", s3_url="https://x/a2", asset_type=AssetType.IMAGE)
+        MediaAssetCreateData(user_id=a_id, s3_key="a/2.jpg", asset_type=AssetType.IMAGE)
     )
     await gw.create(
-        MediaAssetCreateData(user_id=b_id, s3_key="b/1.jpg", s3_url="https://x/b1", asset_type=AssetType.IMAGE)
+        MediaAssetCreateData(user_id=b_id, s3_key="b/1.jpg", asset_type=AssetType.IMAGE)
     )
 
     a_assets = await gw.list_by_user(a_id)
@@ -193,14 +193,14 @@ def test_media_assets_router_scopes_by_current_user(client: TestClient) -> None:
     asyncio.run(
         gw.create(
             MediaAssetCreateData(
-                user_id=uuid.UUID(a_id), s3_key="k1", s3_url="https://x/1", asset_type=AssetType.IMAGE
+                user_id=uuid.UUID(a_id), s3_key="k1", asset_type=AssetType.IMAGE
             )
         )
     )
     asyncio.run(
         gw.create(
             MediaAssetCreateData(
-                user_id=uuid.UUID(b_id), s3_key="k2", s3_url="https://x/2", asset_type=AssetType.IMAGE
+                user_id=uuid.UUID(b_id), s3_key="k2", asset_type=AssetType.IMAGE
             )
         )
     )
@@ -224,7 +224,7 @@ def test_get_media_asset_by_id_scopes_by_current_user(client: TestClient) -> Non
     asset = asyncio.run(
         gw.create(
             MediaAssetCreateData(
-                user_id=uuid.UUID(a_id), s3_key="k1", s3_url="https://x/1", asset_type=AssetType.IMAGE
+                user_id=uuid.UUID(a_id), s3_key="k1", asset_type=AssetType.IMAGE
             )
         )
     )

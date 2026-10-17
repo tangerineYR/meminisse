@@ -51,7 +51,7 @@ class AutobiographyPollingStatus(BaseModel):
     id: uuid.UUID
     status: AutobiographyStatus
     final_content_ready: bool
-    pdf_url: str | None
+    pdf_url: str | None = None
     chapters: list[ChapterStatusItem]
 
 
@@ -66,7 +66,7 @@ class AutobiographyRead(BaseModel):
     style_bible: dict | None
     book_synopsis: str | None
     final_content: str | None
-    pdf_url: str | None
+    pdf_url: str | None = None
     photo_placements: list[PhotoPlacementItem] | None
     created_at: datetime
     updated_at: datetime

@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api/client";
-import type { TokenResponse, User } from "@/types/api";
+import type { User } from "@/types/api";
 
 export interface LoginInput {
   email: string;
@@ -7,8 +7,7 @@ export interface LoginInput {
 }
 
 export const authApi = {
-  login: (input: LoginInput) => apiClient.post<TokenResponse>("/api/v1/auth/login", input),
-  refresh: (refreshToken: string) =>
-    apiClient.post<TokenResponse>("/api/v1/auth/refresh", { refresh_token: refreshToken }),
+  login: (input: LoginInput) => apiClient.post<{ authenticated: boolean }>("/api/v1/auth/login", input),
+  logout: () => apiClient.post("/api/v1/auth/logout"),
   me: () => apiClient.get<User>("/api/v1/auth/me"),
 };
