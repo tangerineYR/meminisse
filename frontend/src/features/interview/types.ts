@@ -10,4 +10,3 @@ export interface ChatOverlayProps {
    * 고정값 — 부모가 여는 시점에만 정한다. */
   startMode?: "queue" | "episode";
 }
-
