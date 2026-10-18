@@ -1,3 +1,0 @@
-# Licensing review pending
-
-No repository-wide license is granted by this change. Both code authors must agree on terms before a LICENSE is selected. The old bundled font has been replaced with the authoritative Google Fonts Gowun Batang release. The frontend uses losslessly compressed WOFF2 versions of Gowun Batang and Noto Sans KR. Their copyright/OFL notices and exact source/output hashes are in `docs/licenses/`. No font glyphs were subset or renamed. Third-party npm/Python packages retain their own licenses. Planning/presentation documents and sample images require separate publication permission and privacy review; they are not automatically covered by a future code license.
