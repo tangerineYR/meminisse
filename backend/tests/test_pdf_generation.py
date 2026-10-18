@@ -34,7 +34,6 @@ async def test_generate_manuscript_pdf_produces_valid_pdf_and_stores_url() -> No
         patch("app.clients.solar.structured_completion", new=_fake_structured_completion),
         patch("app.clients.embeddings.embed_query", return_value=[1.0, 0.0, 0.0]),
         patch("app.clients.supabase_auth.admin_create_user", new=_fake_admin_create_user),
-        patch("app.services.pdf_service._resolve_manuscript_font_url", return_value=""),
     ):
         gateways = _build_mock_gateways()
         user = await _seed_user_with_events(gateways)
@@ -112,7 +111,6 @@ async def test_generate_manuscript_pdf_renders_part_divider_pages() -> None:
         patch("app.clients.solar.structured_completion", new=_fake_structured_completion_with_parts),
         patch("app.clients.embeddings.embed_query", return_value=[1.0, 0.0, 0.0]),
         patch("app.clients.supabase_auth.admin_create_user", new=_fake_admin_create_user),
-        patch("app.services.pdf_service._resolve_manuscript_font_url", return_value=""),
     ):
         gateways = _build_mock_gateways()
         user = await _seed_user_with_events(gateways)
